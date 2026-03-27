@@ -29,16 +29,49 @@
             bullets = this.physics.add.group({
                 defaultKey: 'bullet',
                 maxSize: 10
+
+                this.physics.world.on('worldbounds', (body) => { body.gameObject.setActive(false).setVisible(false); });
             });
 
             cursors = this.input.keyboard.createCursorKeys();
             this.input.keyboard.on('keydown-SPACE', shoot, this);
+
+enemies = this.physics.add.group();
+
+let enemy = enemies.create(400, 100, 'enemySprite');
+
+this.physics.add.overlap(bullets, enemies, hitEnemy, null, this);
         }
 
         function update() {
             if (cursors.left.isDown) player.setVelocityX(-300);
             else if (cursors.right.isDown) player.setVelocityX(300);
             else player.setVelocityX(0);
+
+    player.setVelocity(0);
+
+                
+    if (cursors.left.isDown) {
+        player.setVelocityX(-300);
+    } else if (cursors.right.isDown) {
+        player.setVelocityX(300);
+    }
+
+   
+    if (cursors.up.isDown) {
+        player.setVelocityY(-300);
+    } else if (cursors.down.isDown) {
+        player.setVelocityY(300);
+    }
+    
+    bullets.children.each(function(bullet) {
+        if (bullet.active && bullet.y < -50) { 
+            bullet.setActive(false).setVisible(false);
+            bullet.body.stop();
+        }
+    }, this);
+}
+}
         }
 
         function shoot() {
@@ -46,6 +79,9 @@
             if (bullet) {
                 bullet.setActive(true).setVisible(true);
                 bullet.body.velocity.y = -500;
+
+                bullet.setCollideWorldBounds(true);
+                bullet.body.onWorldBounds = true;
             }
         }
     </script>
